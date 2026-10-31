@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#05070f" />
+  <meta name="description" content="Clone do Tetris feito com HTML, CSS e JavaScript puro, com recordes salvos no navegador." />
+  <title>Tetris — Clone</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='12' height='12' rx='3' fill='%2322d3ee'/%3E%3Crect x='18' y='2' width='12' height='12' rx='3' fill='%23a855f7'/%3E%3Crect x='18' y='18' width='12' height='12' rx='3' fill='%2322d3ee'/%3E%3Crect x='2' y='18' width='12' height='12' rx='3' fill='%23f97316'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <h1 class="brand-name">TETRIS</h1>
+        <span class="brand-sub">clone</span>
+      </div>
+      <div class="topbar__actions">
+        <button class="icon-btn" id="sound-btn" type="button" aria-label="Ativar ou desativar som" title="Som">🔊</button>
+        <button class="icon-btn" id="pause-btn" type="button" aria-label="Pausar jogo" title="Pausar (P)">⏸</button>
+      </div>
+    </header>
+
+    <section class="hud" aria-label="Placar">
+      <div class="stat">
+        <span class="stat__label">Pontos</span>
+        <span class="stat__value" id="score">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label">Nível</span>
+        <span class="stat__value" id="level">1</span>
+      </div>
+      <div class="stat">
+        <span class="stat__label">Linhas</span>
+        <span class="stat__value" id="lines">0</span>
+      </div>
+      <div class="stat stat--best">
+        <span class="stat__label">Recorde</span>
+        <span class="stat__value" id="best">0</span>
+      </div>
+    </section>
+
+    <main class="arena">
+      <aside class="side side--left">
+        <section class="card">
+          <h2 class="card__title">Reserva</h2>
+          <canvas id="hold-canvas" class="mini-canvas mini-canvas--hold" aria-label="Peça reservada"></canvas>
+          <p class="card__hint">C / Shift</p>
+        </section>
+        <section class="card card--help">
+          <h2 class="card__title">Controles</h2>
+          <ul class="keys">
+            <li><span class="keys__combo"><kbd>←</kbd><kbd>→</kbd></span><span>Mover</span></li>
+            <li><span class="keys__combo"><kbd>↓</kbd></span><span>Descer</span></li>
+            <li><span class="keys__combo"><kbd>↑</kbd><kbd>X</kbd></span><span>Girar</span></li>
+            <li><span class="keys__combo"><kbd>Z</kbd></span><span>Girar anti-horário</span></li>
+            <li><span class="keys__combo"><kbd>espaço</kbd></span><span>Queda rápida</span></li>
+            <li><span class="keys__combo"><kbd>P</kbd><kbd>Esc</kbd></span><span>Pausar</span></li>
+          </ul>
+        </section>
+      </aside>
+
+      <div class="board-wrap">
+        <canvas id="board-canvas" class="board" aria-label="Tabuleiro do Tetris">Seu navegador não suporta canvas.</canvas>
+        <div class="overlay is-visible" id="overlay">
+          <div class="overlay__card">
+            <p class="overlay__eyebrow" id="overlay-eyebrow">Clássico • 7 peças • recordes locais</p>
+            <h2 class="overlay__title" id="overlay-title">TETRIS</h2>
+            <p class="overlay__text" id="overlay-text">Empilhe os blocos e complete linhas para pontuar.</p>
+            <button class="btn btn--primary" id="overlay-btn" type="button">Jogar</button>
+            <p class="overlay__hint" id="overlay-hint">Enter para começar</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side side--right">
+        <section class="card">
+          <h2 class="card__title">Próximas</h2>
+          <canvas id="next-canvas" class="mini-canvas mini-canvas--next" aria-label="Próximas peças"></canvas>
+        </section>
+        <section class="card card--scores">
+          <h2 class="card__title">Recordes</h2>
+          <ol class="leaderboard" id="leaderboard"></ol>
+          <p class="card__hint" id="leaderboard-empty">Sem recordes ainda</p>
+        </section>
+      </aside>
+    </main>
+
+    <div class="touch-controls" aria-label="Controles de toque">
+      <button class="touch-btn" type="button" data-action="left" aria-label="Mover para a esquerda">◀</button>
+      <button class="touch-btn" type="button" data-action="rotate" aria-label="Girar peça">⟳</button>
+      <button class="touch-btn" type="button" data-action="right" aria-label="Mover para a direita">▶</button>
+      <button class="touch-btn" type="button" data-action="hold" aria-label="Reservar peça">⇄</button>
+      <button class="touch-btn" type="button" data-action="down" aria-label="Descer">▼</button>
+      <button class="touch-btn" type="button" data-action="drop" aria-label="Queda rápida">⤓</button>
+    </div>
+
+    <footer class="footer">
+      Feito com HTML, CSS e JavaScript • recordes salvos no seu navegador
+    </footer>
+  </div>
+
+  <noscript>
+    <p class="noscript">Este jogo precisa de JavaScript habilitado para funcionar.</p>
+  </noscript>
+
+  <script src="game.js"></script>
+</body>
+</html>
